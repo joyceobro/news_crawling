@@ -17,7 +17,7 @@ app.use(express.urlencoded());
 
 const mainRouter=require('./router/mainRouter');
 
-app.use('/class101', mainRouter);
+app.use('/', mainRouter);
 
 app.listen(3000, function(req, res){
     db.sequelize.sync({force:false})  //db의 전원버튼 force가 거짓이면 리셋이 아니라 업데이트를 해줌

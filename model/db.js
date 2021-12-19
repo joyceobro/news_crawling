@@ -13,8 +13,9 @@ sequelize= new Sequelize("class101", "root","mysql9p", {
         freezeTableName: true
     }
 })
-
 var db={};
+db.users=sequelize.import(__dirname+"/users.js"); 
+
 db.sequelize=sequelize;
 db.Sequelize=Sequelize;
 
