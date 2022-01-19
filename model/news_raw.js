@@ -1,16 +1,16 @@
 module.exports=function(sequelize, DataTypes){
-    return sequelize.define('reviews', { 
+    return sequelize.define('news_raw', { 
     idx: {
         type:DataTypes.INTEGER,
         autoIncrement:true,
         primaryKey:true,
         allowNull:false
     }, 
-    movie_id: {
+    title: {
         type:DataTypes.STRING(250)
     },
-    review: {
-        type:DataTypes.TEXT
+    link: {
+        type:DataTypes.STRING(250)
     }
     });
 }

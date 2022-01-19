@@ -1,7 +1,7 @@
 var Sequelize=require("sequelize");
 var sequelize;
 
-sequelize= new Sequelize("class101", "root","mysql9p", {
+sequelize= new Sequelize("news_db", "root","mysql9p", {
     host:"localhost", 
     port: 3306,
     dialect:"mysql",
@@ -15,7 +15,7 @@ sequelize= new Sequelize("class101", "root","mysql9p", {
 })
 var db={};
 db.users=sequelize.import(__dirname+"/users.js"); 
-db.reviews=sequelize.import(__dirname+"/reviews.js"); 
+db.news_raw=sequelize.import(__dirname+"/news_raw.js"); 
 
 db.sequelize=sequelize;
 db.Sequelize=Sequelize;

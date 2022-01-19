@@ -2,8 +2,49 @@ const express =require('express');
 const router=express.Router();
 const db=require('../model/db');
 
+const cheerio=require("cheerio"); //크롤링
+const axios=require("axios"); //외부에서 정보를 가져올 때
+const iconv=require("iconv-lite"); //한글 깨질 때
+const url ="https://search.naver.com/search.naver?&where=news&query=15%EC%9D%BC&sm=tab_pge&sort=0&photo=0&field=0&reporter_article=&pd=0&ds=&de=&docid=&nso=so:r,p:all,a:all&mynews=0&cluster_rank=23"
+
+router.get("/excel/down", function(req,res){
+    let excel_data=[{"A":1,"B":2, "C":3, "D":4}]
+    res.xls('data.xlsx', excel_data);
+})
+
+
+router.get("/excel",function(req,res){
+    res.render("excel")
+})
+
+
+
+router.get("/crawling", function(req,res){
+
+    axios({url:url, method:"GET", responseType:"arraybuffer"}).then(function(html){
+        const content=iconv.decode(html.data, 'utf-8').toString() //한글깨짐 방지
+        const $ =cheerio.load(content) 
+        const table = $(".news_tit")  //리스트로 담음
+       const result =[];
+        table.each(function(i,element){
+            const title = $(element).text();
+            const link = $(element).attr('href');
+            result.push({
+                title,
+                link,
+            });
+        }) //리스트 안에서 반복문
+        res.send(result[result.length-1]);
+        res.send({success:200})
+    })
+    res.send({success:200})
+})
+
+
+
+
 router.get("/", function(req, res){
-   res.render('main', {title:"영화 리뷰 사이트"})
+   res.render('test', {title:"영화 리뷰 사이트"})
 })
 
 router.post("/review/create", function(req,res){
