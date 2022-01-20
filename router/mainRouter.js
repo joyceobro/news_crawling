@@ -5,7 +5,7 @@ const db=require('../model/db');
 const cheerio=require("cheerio"); //크롤링
 const axios=require("axios"); //외부에서 정보를 가져올 때
 const iconv=require("iconv-lite"); //한글 깨질 때
-const url ="https://search.naver.com/search.naver?&where=news&query=15%EC%9D%BC&sm=tab_pge&sort=0&photo=0&field=0&reporter_article=&pd=0&ds=&de=&docid=&nso=so:r,p:all,a:all&mynews=0&cluster_rank=23"
+const url ="https://search.naver.com/search.naver?&where=news&query=17%EC%9D%BC&sm=tab_pge&sort=0&photo=0&field=0&reporter_article=&pd=0&ds=&de=&docid=&nso=so:r,p:all,a:all&mynews=0&cluster_rank=23"
 
 router.get("/excel/down", function(req,res){
     let excel_data=[{"A":1,"B":2, "C":3, "D":4}]
@@ -29,15 +29,23 @@ router.get("/crawling", function(req,res){
         table.each(function(i,element){
             const title = $(element).text();
             const link = $(element).attr('href');
-            result.push({
-                title,
-                link,
-            });
+            db.news_raw.create({
+                news_title: title,
+                news_link: link
+            }).then(function(result){
+                res.send({success:200})
+            })
         }) //리스트 안에서 반복문
-        res.send(result[result.length-1]);
-        res.send({success:200})
     })
     res.send({success:200})
+})
+
+router.get("/view", function(req,res){
+    let news_id=req.query.news_id;
+    
+    db.news_raw.findAll({where:{idx:news_id}}).then(function(result){
+        res.send({success:200, data:result})
+    })
 })
 
 
@@ -63,9 +71,9 @@ router.post("/review/create", function(req,res){
 })
 
 router.get("/review/read", function(req,res){
-    let movie_id=req.query.movie_id;
+    let news_id=req.query.news_id;
     
-    db.reviews.findAll({where:{movie_id:movie_id}}).then(function(result){
+    db.reviews.findAll({where:{idx:news_id}}).then(function(result){
         res.send({success:200, data:result})
     })
 })

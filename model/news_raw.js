@@ -6,10 +6,10 @@ module.exports=function(sequelize, DataTypes){
         primaryKey:true,
         allowNull:false
     }, 
-    title: {
+    news_title: {
         type:DataTypes.STRING(250)
     },
-    link: {
+    news_link: {
         type:DataTypes.STRING(250)
     }
     });
