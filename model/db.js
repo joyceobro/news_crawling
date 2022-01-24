@@ -16,6 +16,7 @@ sequelize= new Sequelize("news_db", "root","mysql9p", {
 var db={};
 db.users=sequelize.import(__dirname+"/users.js"); 
 db.news_raw=sequelize.import(__dirname+"/news_raw.js"); 
+db.select_news=sequelize.import(__dirname+"/select_news.js"); 
 
 db.sequelize=sequelize;
 db.Sequelize=Sequelize;

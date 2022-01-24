@@ -5,7 +5,8 @@ const db=require('../model/db');
 const cheerio=require("cheerio"); //크롤링
 const axios=require("axios"); //외부에서 정보를 가져올 때
 const iconv=require("iconv-lite"); //한글 깨질 때
-const url ="https://search.naver.com/search.naver?&where=news&query=17%EC%9D%BC&sm=tab_pge&sort=0&photo=0&field=0&reporter_article=&pd=0&ds=&de=&docid=&nso=so:r,p:all,a:all&mynews=0&cluster_rank=23"
+const { request } = require('express');
+const url ="https://search.naver.com/search.naver?&where=news&query=24%EC%9D%BC&sm=tab_pge&sort=0&photo=0&field=0&reporter_article=&pd=0&ds=&de=&docid=&nso=so:r,p:all,a:all&mynews=0&cluster_rank=23"
 
 router.get("/excel/down", function(req,res){
     let excel_data=[{"A":1,"B":2, "C":3, "D":4}]
@@ -17,7 +18,9 @@ router.get("/excel",function(req,res){
     res.render("excel")
 })
 
-
+router.get("/input",function(req,res){
+    res.render('input')
+})
 
 router.get("/crawling", function(req,res){
 
@@ -40,14 +43,35 @@ router.get("/crawling", function(req,res){
     res.send({success:200})
 })
 
-router.get("/view", function(req,res){
-    let news_id=req.query.news_id;
+router.post("/db_input", function(req,res){
+    console.log(req.body);
+    var body =req.body;
+    k=Object.keys(body).length;
+for (var i=0; i<k;i++){
+    db.select_news.create({
+        select_title: Object.keys(body)[i],
+        select_link: Object.values(body)[i]
+    }).then(function(result){
+        res.redirect('/view_select');
+    })
     
-    db.news_raw.findAll({where:{idx:news_id}}).then(function(result){
+    
+}
+})
+
+router.get("/view", function(req,res){
+     
+    db.news_raw.findAll().then(function(result){
         res.send({success:200, data:result})
     })
 })
 
+router.get("/view_select", function(req,res){
+     
+    db.select_news.findAll().then(function(result){
+        res.send({success:200, data:result})
+    })
+})
 
 
 
