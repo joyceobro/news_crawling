@@ -6,7 +6,8 @@ const cheerio=require("cheerio"); //크롤링
 const axios=require("axios"); //외부에서 정보를 가져올 때
 const iconv=require("iconv-lite"); //한글 깨질 때
 const { request } = require('express');
-const url ="https://search.naver.com/search.naver?&where=news&query=24%EC%9D%BC&sm=tab_pge&sort=0&photo=0&field=0&reporter_article=&pd=0&ds=&de=&docid=&nso=so:r,p:all,a:all&mynews=0&cluster_rank=23"
+const url_a ="https://search.naver.com/search.naver?&where=news&query="
+const url_b ="%EC%9D%BC&sm=tab_pge&sort=0&photo=0&field=0&reporter_article=&pd=0&ds=&de=&docid=&nso=so:r,p:all,a:all&mynews=0&cluster_rank=23"
 
 router.get("/excel/down", function(req,res){
     let excel_data=[{"A":1,"B":2, "C":3, "D":4}]
@@ -21,10 +22,16 @@ router.get("/excel",function(req,res){
 router.get("/input",function(req,res){
     res.render('input')
 })
-
-router.get("/crawling", function(req,res){
-
-    axios({url:url, method:"GET", responseType:"arraybuffer"}).then(function(html){
+router.post("/input_test", function(req,res){
+    var input_val = req.body;
+    console.log(input_val.start_day);
+    res.send({success:200})
+  
+})
+router.post("/crawling", function(req,res){
+    var input_val = req.body;
+    console.log(input_val.start_day);
+    axios({url:url_a+String(input_val.start_day)+url_b, method:"GET", responseType:"arraybuffer"}).then(function(html){
         const content=iconv.decode(html.data, 'utf-8').toString() //한글깨짐 방지
         const $ =cheerio.load(content) 
         const table = $(".news_tit")  //리스트로 담음
@@ -36,11 +43,11 @@ router.get("/crawling", function(req,res){
                 news_title: title,
                 news_link: link
             }).then(function(result){
-                res.send({success:200})
+                res.redirect('/view');
             })
         }) //리스트 안에서 반복문
     })
-    res.send({success:200})
+  
 })
 
 router.post("/db_input", function(req,res){
